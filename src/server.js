@@ -33,6 +33,32 @@ app.post('/tasks', async (req, res) => {
         res.status(400).send(err.message);
     }
 });
+app.delete('/tasks/:id', async (req, res) => {
+    const taskId = req.params.id;
+
+    try {
+        const deletedTask = await TaskModel.findOneAndDelete({ id: taskId });
+        if (!deletedTask) {
+            return res.status(404).json({ error: 'Task not found' });
+        } else {
+            return res.status(200).json(deletedTask);
+        }
+
+    } catch (err) {
+        res.status(500).send('Ошибка при удалении задачи:', err.message);
+    }
+
+    // try {
+    //     const deletedTask = await TaskModel.findOneAndDelete({ id: taskId }); // Замените { id: taskId } на taskId
+    //     if (!deletedTask) {
+    //         console.log('Задача не найдена.');
+    //     } else {
+    //         console.log('Удалена задача:', deletedTask);
+    //     }
+    // } catch (err) {
+    //     console.error('Ошибка при удалении задачи:', err);
+});
+
 
 const taskManager = new TaskManager();
 taskManager.loadTasks();
