@@ -4,13 +4,14 @@ import "dotenv/config";
 import mongoose from "mongoose";
 import cors from "cors"
 import {TaskModel} from "../DbService/taskModel.js";
+import { validateTaskData } from '../middleware/validateTaskData.js';
 
 const app = express();
 app.use(express.json());
 app.use(cors())
 const PORT = process.env.PORT || 3000;
 
-app.get('/', (req, res) => {
+app.get('/', validateTaskData, (req, res) => {
     res.send('Hello, Express!');
 });
 
@@ -24,7 +25,7 @@ app.get('/', (req, res) => {
 //     }
 // });
 
-app.post('/tasks', async (req, res) => {
+app.post('/tasks', validateTaskData, async (req, res) => {
     try {
         const newTask = new TaskModel(req.body);
         const savedTask = await newTask.save();
