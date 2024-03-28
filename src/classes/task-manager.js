@@ -10,12 +10,13 @@ class TaskManager extends EventEmitter {
         this.tasks = [];
     }
 
-    async loadTasks() {
-        fs.readFile('../tests/tasks.json', 'utf8', (err, data) => {
+    loadTasks() {
+        fs.readFile('tasks.json', 'utf8', (err, data) => {
             if (err) {
                 console.error("Error reading file:", err);
                 return;
             }
+            console.log("No error");
             const tasksData = JSON.parse(data);
             this.tasks = tasksData.map(task => {
                 const newTask = new TaskModel(task);
@@ -43,14 +44,14 @@ class TaskManager extends EventEmitter {
 
     addTask(task) {
         this.tasks.push(task);
-        this.saveTasksToFile('../tests/tasks.json');
+        this.saveTasksToFile('tasks.json');
         this.printTasks()
     }
 
     async removeTask(taskId) {
         await this.loadTasks();
         this.tasks = this.tasks.filter(task => task.id !== taskId);
-        this.saveTasksToFile('../tests/tasks.json');
+        this.saveTasksToFile('tasks.json');
         this.printTasks()
         this.emit('taskRemoved', this.tasks);
     }
