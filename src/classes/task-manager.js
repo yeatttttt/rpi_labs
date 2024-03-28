@@ -2,6 +2,7 @@ import fs from 'fs';
 import Task from './task.js';
 import chalk from "chalk";
 import { EventEmitter } from 'events';
+import {TaskModel} from "../../DbService/taskModel.js";
 
 class TaskManager extends EventEmitter {
     constructor() {
@@ -10,13 +11,22 @@ class TaskManager extends EventEmitter {
     }
 
     async loadTasks() {
-        try {
-            const data = await fs.promises.readFile('../tests/tasks.json', 'utf8');
-            this.tasks = JSON.parse(data);
-            this.emit('tasksLoaded', this.tasks);
-        } catch (err) {
-            console.error("Ошибка чтения файла:", err);
-        }
+        fs.readFile('../tests/tasks.json', 'utf8', (err, data) => {
+            if (err) {
+                console.error("Error reading file:", err);
+                return;
+            }
+            const tasksData = JSON.parse(data);
+            this.tasks = tasksData.map(task => {
+                const newTask = new TaskModel(task);
+                newTask.save()
+                return newTask;
+            })
+        })
+
+            // const data = await fs.promises.readFile('../tests/tasks.json', 'utf8');
+            // this.tasks = JSON.parse(data);
+            // this.emit('tasksLoaded', this.tasks);
     }
 
     printTasks() {
