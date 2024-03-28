@@ -30,6 +30,8 @@ class TaskManager extends EventEmitter {
             // this.emit('tasksLoaded', this.tasks);
     }
 
+
+
     printTasks() {
         this.tasks.forEach(task => {
             if (task.status === 'Complete') {

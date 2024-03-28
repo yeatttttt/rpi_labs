@@ -15,14 +15,25 @@ app.get('/', (req, res) => {
 });
 
 
-app.get('/tasks', async (req, res) => {
+// app.get('/tasks', async (req, res) => {
+//     try {
+//         const tasks = await TaskModel.find();
+//         res.json(tasks);
+//     } catch (err) {
+//         res.status(500).send(err.message);
+//     }
+// });
+
+app.post('/tasks', async (req, res) => {
     try {
-        const tasks = await TaskModel.find();
-        res.json(tasks);
+        const newTask = new TaskModel(req.body);
+        const savedTask = await newTask.save();
+        res.status(201).json(savedTask);
     } catch (err) {
-        res.status(500).send(err.message);
+        res.status(400).send(err.message);
     }
 });
+
 const taskManager = new TaskManager();
 taskManager.loadTasks();
 
@@ -40,8 +51,8 @@ taskManager.on('tasksLoaded', (tasks) => {
 
 const mongoUri = `mongodb://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_NAME}?authSource=admin`;
 
-app.listen(PORT, () => {
-    console.log(`Server is running on  http://localhost:${PORT}`);
+app.listen(3000, () => {
+    console.log(`Server is running on  http://localhost:3000`);
 });
 
 mongoose.connect(mongoUri)
